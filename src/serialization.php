@@ -40,6 +40,10 @@ function unserialize($input)
 
     try {
         $result = \unserialize($input);
+
+        if ($result === false && $input !== 'b:0;') {
+            throw new SyntaxError('Unknown error was encountered');
+        }
     } catch (\Exception $e) {
         // Ensure the error handler is restored, even if an exception occurs.
         restore_error_handler();
