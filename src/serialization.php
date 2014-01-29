@@ -83,14 +83,6 @@ function isSerialized($value, &$result = null)
         return false;
     }
 
-    // Serialized false, return true. unserialize() returns false on an
-    // invalid string or it could return false if the string is serialized
-    // false, eliminate that possibility.
-    if ($value === 'b:0;') {
-        $result = false;
-        return true;
-    }
-
     $length = strlen($value);
     $end    = '';
 
