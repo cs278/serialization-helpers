@@ -11,6 +11,47 @@
 
 namespace Cs278\SerializationHelpers;
 
+use Cs278\SerializationHelpers\Exception\SyntaxError;
+
+/**
+ * Wrapper around unserialize() that converts syntax errors to exceptions.
+ *
+ * @param  string $input Serialized string
+ * @return mixed
+ * @throws SyntaxError   If there was an error unserializing the string
+ */
+function unserialize($input)
+{
+    static $errorHandler;
+
+    if (!$errorHandler) {
+        $errorHandler = function($code, $message, $file, $line, array $context) {
+            // Wrap the error into an ErrorException, for further debugging information.
+            $e = new \ErrorException($message, $code, 0, $file, $line);
+
+            // Error messages are prefixed with `unserialize(): `.
+            $message = preg_replace('{^unserialize\(\):\s+}', '', $message);
+
+            throw new SyntaxError($message, 0, $e);
+        };
+    }
+
+    set_error_handler($errorHandler, E_NOTICE);
+
+    try {
+        $result = \unserialize($input);
+    } catch (\Exception $e) {
+        // Ensure the error handler is restored, even if an exception occurs.
+        restore_error_handler();
+
+        throw $e;
+    }
+
+    restore_error_handler();
+
+    return $result;
+}
+
 /**
  * Tests if an input is valid PHP serialized string.
  *
@@ -100,7 +141,7 @@ function isSerialized($value, &$result = null)
             return false;
     }
 
-    if (($result = @unserialize($value)) === false) {
+    if (($result = @\unserialize($value)) === false) {
         $result = null;
 
         return false;
