@@ -1,11 +1,12 @@
 <?php
 
-/**
- * This program is free software. It comes without any warranty, to
- * the extent permitted by applicable law. You can redistribute it
- * and/or modify it under the terms of the Do What The Fuck You Want
- * To Public License, Version 2, as published by Sam Hocevar. See
- * http://sam.zoy.org/wtfpl/COPYING for more details.
+/*
+ * This file is part of the PHP Serialization Helpers package.
+ *
+ * © Chris Smith <chris@cs278.org>
+ *
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
  */
 
 namespace Cs278\SerializationHelpers;
@@ -30,7 +31,6 @@ namespace Cs278\SerializationHelpers;
  *
  * @author    Chris Smith <chris@cs278.org>
  * @copyright Copyright © 2009, 2014 Chris Smith
- * @license   http://sam.zoy.org/wtfpl/ WTFPL
  * @param     string  $value  Value to test for serialized form
  * @param     mixed   $result Result of unserialize() of the $value
  * @return    boolean True if $value is serialized data, otherwise false
