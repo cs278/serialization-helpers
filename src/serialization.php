@@ -141,9 +141,9 @@ function isSerialized($value, &$result = null)
             return false;
     }
 
-    if (($result = @\unserialize($value)) === false) {
-        $result = null;
-
+    try {
+        $result = unserialize($value);
+    } catch (SyntaxError $e) {
         return false;
     }
 
