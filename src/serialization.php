@@ -25,7 +25,7 @@ function unserialize($input)
     static $errorHandler;
 
     if (!$errorHandler) {
-        $errorHandler = function($code, $message, $file, $line, array $context) {
+        $errorHandler = function($code, $message, $file, $line) {
             // Wrap the error into an ErrorException, for further debugging information.
             $e = new \ErrorException($message, $code, 0, $file, $line);
 
