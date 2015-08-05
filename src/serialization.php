@@ -12,6 +12,8 @@
 namespace Cs278\SerializationHelpers;
 
 use Cs278\SerializationHelpers\Exception\SyntaxError;
+use Cs278\SerializationHelpers\Exception\SyntaxError\UnknownException;
+use Cs278\SerializationHelpers\Exception\SyntaxErrorFactory;
 
 /**
  * Wrapper around unserialize() that converts syntax errors to exceptions.
@@ -23,16 +25,14 @@ use Cs278\SerializationHelpers\Exception\SyntaxError;
 function unserialize($input)
 {
     static $errorHandler;
+    static $exceptionFactory;
 
     if (!$errorHandler) {
-        $errorHandler = function($code, $message, $file, $line) {
-            // Wrap the error into an ErrorException, for further debugging information.
+        $exceptionFactory = new SyntaxErrorFactory;
+        $errorHandler = function($code, $message, $file, $line) use ($exceptionFactory) {
             $e = new \ErrorException($message, $code, 0, $file, $line);
 
-            // Error messages are prefixed with `unserialize(): `.
-            $message = preg_replace('{^unserialize\(\):\s+}', '', $message);
-
-            throw new SyntaxError($message, 0, $e);
+            throw $exceptionFactory->createFromErrorException($e);
         };
     }
 
@@ -42,7 +42,7 @@ function unserialize($input)
         $result = \unserialize($input);
 
         if ($result === false && $input !== 'b:0;') {
-            throw new SyntaxError('Unknown error was encountered');
+            throw new UnknownException($input, 'Unknown error was encountered');
         }
     } catch (\Exception $e) {
         // Ensure the error handler is restored, even if an exception occurs.

@@ -14,6 +14,7 @@
     <testsuites>
         <testsuite name="Test Suite">
             <file>./tests/serialization.php</file>
+            <file>./tests/Exception/SyntaxErrorFactory.php</file>
         </testsuite>
     </testsuites>
 </phpunit>

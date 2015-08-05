@@ -50,6 +50,10 @@ use Cs278\SerializationHelpers\Exception\SyntaxError;
 try {
     return unserialize('s:"foobar";');
 } catch (SyntaxError $e) {
+    $logger->warning('Input, `{input}` was not valid serialized data', array(
+        'input' => $e->getInput(),
+    ));
+
     return null;
 }
 ```

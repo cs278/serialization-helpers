@@ -11,7 +11,15 @@
 
 namespace Cs278\SerializationHelpers\Exception;
 
-class SyntaxError extends \LogicException implements Exception
+/**
+ * Defines a syntactical error found during unserializeation.
+ */
+interface SyntaxError extends Exception
 {
-
+    /**
+     * Return the serialized data passed to unserialize().
+     *
+     * @return mixed
+     */
+    public function getInput();
 }
