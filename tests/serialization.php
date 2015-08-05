@@ -52,6 +52,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
             array(true, 'b:1;'),
             array('foo', 's:3:"foo";'),
             array((object) array('foo' => 'bar'), 'O:8:"stdClass":1:{s:3:"foo";s:3:"bar";}'),
+            array(array(1, 1, 2, 3), 'a:4:{i:0;i:1;i:1;R:2;i:2;i:2;i:3;i:3;}'),
         );
     }
 
