@@ -53,6 +53,8 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
             array('foo', 's:3:"foo";'),
             array((object) array('foo' => 'bar'), 'O:8:"stdClass":1:{s:3:"foo";s:3:"bar";}'),
             array(array(1, 1, 2, 3), 'a:4:{i:0;i:1;i:1;R:2;i:2;i:2;i:3;i:3;}'),
+            array(new TestStub(''), 'C:41:"Cs278\SerializationHelpers\Tests\TestStub":0:{}'),
+            array(new TestStub('ROBOTS'), 'C:41:"Cs278\SerializationHelpers\Tests\TestStub":6:{ROBOTS}'),
         );
     }
 
@@ -82,6 +84,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
             array('php', 's:3:"php";'),
             array(array(0 => true, "x" => 32), 'a:2:{i:0;b:1;s:1:"x";i:32;}'),
             array((object) array(), 'O:8:"stdClass":0:{}'),
+            array(new TestStub('ROBOTS'), 'C:41:"Cs278\SerializationHelpers\Tests\TestStub":6:{ROBOTS}'),
         );
     }
 
@@ -108,5 +111,23 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
             array('O:8:"stdClas":0:{}'),
             array('a:1:{}'),
         );
+    }
+}
+
+class TestStub implements \Serializable
+{
+    public function __construct($value)
+    {
+        $this->value = $value;
+    }
+
+    public function serialize()
+    {
+        return $this->value;
+    }
+
+    public function unserialize($serialized)
+    {
+        $this->value = $serialized;
     }
 }

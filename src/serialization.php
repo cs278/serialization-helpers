@@ -71,6 +71,7 @@ function unserialize($input)
  * <li>string: <code>s:4:"test";</code></li>
  * <li>array: <code>a:3:{i:0;i:1;i:1;i:2;i:2;i:3;}</code></li>
  * <li>object: <code>O:8:"stdClass":0:{}</code></li>
+ * <li>object (implementing Serializable): <code>C:8:"stdClass":0:{}</code></li>
  * <li>null: <code>N;</code></li>
  * </ul>
  *
@@ -102,6 +103,7 @@ function isSerialized($value, &$result = null)
             $end .= ';';
         case 'a':
         case 'O':
+        case 'C':
             $end .= '}';
 
             if ($value[1] !== ':') {
