@@ -96,11 +96,13 @@ function isSerialized($value, &$result = null)
             if ($value[$length - 2] !== '"') {
                 return false;
             }
+            // Fall through
         case 'b':
         case 'i':
         case 'd':
             // This looks odd but it is quicker than isset()ing
             $end .= ';';
+            // Fall through
         case 'a':
         case 'O':
         case 'C':
@@ -126,6 +128,7 @@ function isSerialized($value, &$result = null)
                 default:
                     return false;
             }
+            // Fall through
         case 'N':
             $end .= ';';
 
