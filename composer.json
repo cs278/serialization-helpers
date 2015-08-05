@@ -1,7 +1,7 @@
 {
     "name": "cs278/serialization-helpers",
     "description": "Helpers to work with serialized strings",
-    "keywords": ["serialize"],
+    "keywords": ["serialize", "serialization", "unserialize"],
     "homepage": "https://github.com/cs278/serialization-helpers",
     "type": "library",
     "license": "MIT",
