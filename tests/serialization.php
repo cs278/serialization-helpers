@@ -55,6 +55,8 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
             array(array(1, 1, 2, 3), 'a:4:{i:0;i:1;i:1;R:2;i:2;i:2;i:3;i:3;}'),
             array(new TestStub(''), 'C:41:"Cs278\SerializationHelpers\Tests\TestStub":0:{}'),
             array(new TestStub('ROBOTS'), 'C:41:"Cs278\SerializationHelpers\Tests\TestStub":6:{ROBOTS}'),
+            array('f', 's:1:"f"'), // PHP doesn't require the trailing semi colon
+            array('f', 's:1:"f"GARBAG;E'), // PHP will even accept complete garbage
         );
     }
 
