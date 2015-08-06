@@ -155,6 +155,10 @@ function isSerialized($value, &$result = null)
         case 'b':
         case 'i':
         case 'd':
+            if ($length < 4) {
+                return false;
+            }
+
             // This looks odd but it is quicker than isset()ing
             $end .= ';';
             // Fall through
