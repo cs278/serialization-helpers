@@ -11,6 +11,9 @@
 
 namespace Cs278\SerializationHelpers\Tests\Exception;
 
+use Cs278\SerializationHelpers\Exception\SyntaxError;
+use Cs278\SerializationHelpers\Exception\SyntaxError\ErrorAtOffsetException;
+use Cs278\SerializationHelpers\Exception\SyntaxError\UnexpectedEndException;
 use Cs278\SerializationHelpers\Exception\SyntaxErrorFactory;
 
 class SyntaxErrorFactoryTest extends \PHPUnit_Framework_TestCase
@@ -38,8 +41,8 @@ class SyntaxErrorFactoryTest extends \PHPUnit_Framework_TestCase
             $factory = new SyntaxErrorFactory;
             $exception = $factory->createFromErrorException($error);
 
-            $this->assertInstanceOf('Cs278\SerializationHelpers\Exception\SyntaxError', $exception);
-            $this->assertInstanceOf('Cs278\SerializationHelpers\Exception\SyntaxError\UnexpectedEndException', $exception);
+            $this->assertInstanceOf(SyntaxError::class, $exception);
+            $this->assertInstanceOf(UnexpectedEndException::class, $exception);
 
             $this->assertSame($input, $exception->getInput());
             $this->assertSame('Unexpected end of serialized data', $exception->getMessage());
@@ -83,8 +86,8 @@ class SyntaxErrorFactoryTest extends \PHPUnit_Framework_TestCase
             $factory = new SyntaxErrorFactory;
             $exception = $factory->createFromErrorException($error);
 
-            $this->assertInstanceOf('Cs278\SerializationHelpers\Exception\SyntaxError', $exception);
-            $this->assertInstanceOf('Cs278\SerializationHelpers\Exception\SyntaxError\ErrorAtOffsetException', $exception);
+            $this->assertInstanceOf(SyntaxError::class, $exception);
+            $this->assertInstanceOf(ErrorAtOffsetException::class, $exception);
 
             $this->assertSame($input, $exception->getInput());
             $this->assertSame($offset, $exception->getOffset());
