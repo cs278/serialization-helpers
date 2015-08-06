@@ -125,6 +125,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
         $isZend = !defined('HHVM_VERSION');
 
         return array_filter(array(
+            array(false),
             array('N'),
             array('b:x;'),
             $isZend ? array('b:2;') : null,
@@ -134,6 +135,25 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
             array('a:2:{i:0;s:1:"x";i:32;}'),
             array('O:8:"stdClas":0:{}'),
             array('a:1:{}'),
+            array(''),
+            array('s:'),
+            array('a='),
+            array('a:#'),
+            array('Q:;'),
+            array('a'),
+            array('C:'),
+            array('O:'),
+            array('a#0:{}'),
+
+            // Incorrect ends.
+            array('N:'),
+            array('b:0}'),
+            array('i:0:'),
+            array('d:0#'),
+            array('a:0:{};'),
+            array('s:0:"":'),
+            array('O:1:"a":0:{x'),
+            array('C:1:"b":0:{;'),
         ), 'is_array');
     }
 
