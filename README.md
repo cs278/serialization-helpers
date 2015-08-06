@@ -2,6 +2,7 @@ Serialization Helpers
 =====================
 
 [![Build Status](https://travis-ci.org/cs278/serialization-helpers.svg?branch=master)](https://travis-ci.org/cs278/serialization-helpers)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/cs278/serialization-helpers/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/cs278/serialization-helpers/?branch=master)
 
 Helpers for dealing with strings created by the `serialize()` function in PHP.
 
