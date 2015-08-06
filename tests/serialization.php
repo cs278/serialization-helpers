@@ -28,6 +28,27 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array('O:'),
+            array(null),
+            array(false),
+            array(0),
+            array(1.1),
+        );
+    }
+
+    /**
+     * @dataProvider dataUnserializeBadArgument
+     */
+    public function testUnserializeBadArgument($input, $message)
+    {
+        $this->setExpectedException('PHPUnit_Framework_Error', $message);
+        serialization\unserialize($input);
+    }
+
+    public function dataUnserializeBadArgument()
+    {
+        return array(
+            array(array(), 'unserialize() expects parameter 1 to be string, array given'),
+            array(new \stdClass, 'unserialize() expects parameter 1 to be string, object given'),
         );
     }
 
