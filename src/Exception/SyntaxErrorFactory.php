@@ -53,9 +53,14 @@ final class SyntaxErrorFactory
             );
         }
 
+        $unexpectedMessage = 'Unknown syntax error occurred';
+        $unexpectedMessage = $message
+            ? sprintf('%s: %s', $unexpectedMessage, $message)
+            : $unexpectedMessage;
+
         return new SyntaxError\UnknownException(
             $input,
-            sprintf('Unknown syntax error occurred: %s', $message),
+            $unexpectedMessage,
             $previous
         );
     }
