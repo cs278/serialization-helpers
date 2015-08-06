@@ -123,6 +123,18 @@ function isSerialized($value, &$result = null)
         return false;
     }
 
+    /*
+     * Smallest variant of each serialized type.
+     *
+     * string(2) "N;"
+     * string(4) "b:0;"
+     * string(4) "i:0;"
+     * string(4) "d:0;"
+     * string(6) "a:0:{}"
+     * string(7) "s:0:"";"
+     * string(12) "O:1:"a":0:{}"
+     * string(12) "C:1:"b":0:{}"
+     */
     $length = strlen($value);
     $end = '';
 
