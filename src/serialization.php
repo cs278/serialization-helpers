@@ -138,6 +138,10 @@ function isSerialized($value, &$result = null)
     $length = strlen($value);
     $end = '';
 
+    if ($length < 2) {
+        return false;
+    }
+
     switch ($value[0]) {
         case 's':
             if ($value[$length - 2] !== '"') {
