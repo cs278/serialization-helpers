@@ -144,6 +144,10 @@ function isSerialized($value, &$result = null)
 
     switch ($value[0]) {
         case 's':
+            if ($length < 7) {
+                return false;
+            }
+
             if ($value[$length - 2] !== '"') {
                 return false;
             }
