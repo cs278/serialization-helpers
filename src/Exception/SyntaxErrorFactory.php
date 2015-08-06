@@ -22,7 +22,7 @@ final class SyntaxErrorFactory
     /**
      * Convert an error exception into SyntaxError exception.
      *
-     * @param ErrorException $e ErrorException raised from unserialize() call
+     * @param \ErrorException $e ErrorException raised from unserialize() call
      *
      * @return SyntaxError
      *
@@ -73,7 +73,7 @@ final class SyntaxErrorFactory
     /**
      * Find stack frame relating to unserialize function.
      *
-     * @param Exception $e
+     * @param \Exception $e
      *
      * @return array|null
      */
