@@ -12,6 +12,7 @@
 namespace Cs278\SerializationHelpers\Tests;
 
 use Cs278\SerializationHelpers as serialization;
+use Cs278\SerializationHelpers\Exception\SyntaxError;
 
 class SerializationTest extends \PHPUnit_Framework_TestCase
 {
@@ -134,6 +135,21 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
             array('O:8:"stdClas":0:{}'),
             array('a:1:{}'),
         ), 'is_array');
+    }
+
+    public function testSyntaxErrorHasInput()
+    {
+        $input = 's:"';
+
+        try {
+            serialization\unserialize($input);
+        } catch (SyntaxError $e) {
+            $this->assertSame($input, $e->getInput());
+
+            return;
+        }
+
+        $this->fail('Should have caught SyntaxError');
     }
 }
 
