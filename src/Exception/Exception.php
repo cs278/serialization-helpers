@@ -11,6 +11,9 @@
 
 namespace Cs278\SerializationHelpers\Exception;
 
+/**
+ * Marker interface for package exceptions.
+ */
 interface Exception
 {
 }

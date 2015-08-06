@@ -22,7 +22,7 @@ final class SyntaxErrorFactory
     /**
      * Convert an error exception into SyntaxError exception.
      *
-     * @param ErrorException $e ErrorException raised from unserialize() call
+     * @param \ErrorException $e ErrorException raised from unserialize() call
      *
      * @return SyntaxError
      *
@@ -33,7 +33,7 @@ final class SyntaxErrorFactory
     {
         $frame = $this->findStackFrame($e);
 
-        if (!$frame) {
+        if (null === $frame) {
             throw new \InvalidArgumentException(
                 'ErrorException does not related to an unserialize error'
             );
@@ -73,9 +73,9 @@ final class SyntaxErrorFactory
     /**
      * Find stack frame relating to unserialize function.
      *
-     * @param Exception $e
+     * @param \Exception $e
      *
-     * @return array
+     * @return array|null
      */
     private function findStackFrame(\Exception $e)
     {
