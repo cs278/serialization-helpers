@@ -80,6 +80,16 @@ class SyntaxErrorFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage ErrorException does not related to an unserialize error
+     */
+    public function testCreateFromErrorExceptionThrowsOnBadException()
+    {
+        $factory = new SyntaxErrorFactory;
+        $factory->createFromErrorException(new \ErrorException('', 0, 0, '', 0));
+    }
+
+    /**
      * @dataProvider dataCreateUnexpectedEnd
      */
     public function testCreateUnexpectedEnd($input)
