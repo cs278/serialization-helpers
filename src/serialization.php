@@ -62,7 +62,9 @@ function unserialize($input)
                     return call_user_func_array($currentHandler, func_get_args());
                 }
 
+                // @codeCoverageIgnoreStart
                 return false;
+                // @codeCoverageIgnoreEnd
             };
         }
     }
