@@ -20,7 +20,7 @@ class SyntaxErrorFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateUnexpectedEnd($input)
     {
-        set_error_handler(function($code, $message, $file, $line) {
+        set_error_handler(function ($code, $message, $file, $line) {
             throw new \ErrorException(
                 $message,
                 E_NOTICE,
@@ -65,7 +65,7 @@ class SyntaxErrorFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateErrorAtOffset($input, $message, $offset)
     {
-        set_error_handler(function($code, $message, $file, $line) {
+        set_error_handler(function ($code, $message, $file, $line) {
             throw new \ErrorException(
                 $message,
                 E_NOTICE,
