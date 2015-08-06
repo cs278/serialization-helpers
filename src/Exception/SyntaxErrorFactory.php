@@ -75,7 +75,7 @@ final class SyntaxErrorFactory
      *
      * @param Exception $e
      *
-     * @return array
+     * @return array|null
      */
     private function findStackFrame(\Exception $e)
     {
