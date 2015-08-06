@@ -20,6 +20,10 @@ class SyntaxErrorFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateUnexpectedEnd($input)
     {
+        // Sanity check as the set_error_handler() call breaks PHPUnit's
+        // exception catching.
+        $this->assertInternalType('string', $input);
+
         set_error_handler(function ($code, $message, $file, $line) {
             throw new \ErrorException(
                 $message,
@@ -65,6 +69,10 @@ class SyntaxErrorFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateErrorAtOffset($input, $message, $offset)
     {
+        // Sanity check as the set_error_handler() call breaks PHPUnit's
+        // exception catching.
+        $this->assertInternalType('string', $input);
+
         set_error_handler(function ($code, $message, $file, $line) {
             throw new \ErrorException(
                 $message,
