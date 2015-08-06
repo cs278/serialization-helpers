@@ -121,17 +121,19 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
 
     public function dataIsSerializedInvalid()
     {
-        return array(
+        $isZend = !defined('HHVM_VERSION');
+
+        return array_filter(array(
             array('N'),
             array('b:x;'),
-            array('b:2;'),
-            array('i:;'),
+            $isZend ? array('b:2;') : null,
+            $isZend ? array('i:;') : null,
             array('d:3.14.159;'),
             array('s:3:"php"'),
             array('a:2:{i:0;s:1:"x";i:32;}'),
             array('O:8:"stdClas":0:{}'),
             array('a:1:{}'),
-        );
+        ), 'is_array');
     }
 }
 
