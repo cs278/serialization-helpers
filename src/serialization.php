@@ -119,6 +119,10 @@ function isSerialized($value, &$result = null)
         return false;
     }
 
+    if ('' === $value) {
+        return false;
+    }
+
     $length = strlen($value);
     $end = '';
 
