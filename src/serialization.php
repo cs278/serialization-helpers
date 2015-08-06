@@ -33,19 +33,34 @@ function unserialize($input)
 
     if (!$errorHandler) {
         $exceptionFactory = new SyntaxErrorFactory();
-        $errorHandler = function ($code, $message, $file, $line) use ($exceptionFactory, &$currentHandler) {
-            if ($code === E_NOTICE) {
-                $e = new \ErrorException($message, $code, 0, $file, $line);
 
-                throw $exceptionFactory->createFromErrorException($e);
-            }
+        if (defined('HHVM_VERSION')) {
+            $errorHandler = function ($code, $message, $file, $line) use ($exceptionFactory, &$currentHandler, &$input) {
+                if ($code === E_NOTICE) {
+                    throw $exceptionFactory->create($input, $message);
+                }
 
-            if ($currentHandler) {
-                return call_user_func_array($currentHandler, func_get_args());
-            }
+                if ($currentHandler) {
+                    return call_user_func_array($currentHandler, func_get_args());
+                }
 
-            return false;
-        };
+                return false;
+            };
+        } else {
+            $errorHandler = function ($code, $message, $file, $line) use ($exceptionFactory, &$currentHandler) {
+                if ($code === E_NOTICE) {
+                    $e = new \ErrorException($message, $code, 0, $file, $line);
+
+                    throw $exceptionFactory->createFromErrorException($e);
+                }
+
+                if ($currentHandler) {
+                    return call_user_func_array($currentHandler, func_get_args());
+                }
+
+                return false;
+            };
+        }
     }
 
     $currentHandler = set_error_handler($errorHandler);
