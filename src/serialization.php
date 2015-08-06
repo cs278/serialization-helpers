@@ -18,9 +18,11 @@ use Cs278\SerializationHelpers\Exception\SyntaxErrorFactory;
 /**
  * Wrapper around unserialize() that converts syntax errors to exceptions.
  *
- * @param  string $input Serialized string
+ * @param string $input Serialized string
+ *
  * @return mixed
- * @throws SyntaxError   If there was an error unserializing the string
+ *
+ * @throws SyntaxError If there was an error unserializing the string
  */
 function unserialize($input)
 {
@@ -30,8 +32,8 @@ function unserialize($input)
     $currentHandler = null;
 
     if (!$errorHandler) {
-        $exceptionFactory = new SyntaxErrorFactory;
-        $errorHandler = function($code, $message, $file, $line) use ($exceptionFactory, &$currentHandler) {
+        $exceptionFactory = new SyntaxErrorFactory();
+        $errorHandler = function ($code, $message, $file, $line) use ($exceptionFactory, &$currentHandler) {
             if ($code === E_NOTICE) {
                 $e = new \ErrorException($message, $code, 0, $file, $line);
 
@@ -87,9 +89,11 @@ function unserialize($input)
  *
  * @author    Chris Smith <chris@cs278.org>
  * @copyright Copyright © 2009, 2014 Chris Smith
- * @param     string  $value  Value to test for serialized form
- * @param     mixed   $result Result of unserialize() of the $value
- * @return    boolean True if $value is serialized data, otherwise false
+ *
+ * @param string $value  Value to test for serialized form
+ * @param mixed  $result Result of unserialize() of the $value
+ *
+ * @return bool True if $value is serialized data, otherwise false
  */
 function isSerialized($value, &$result = null)
 {
@@ -99,7 +103,7 @@ function isSerialized($value, &$result = null)
     }
 
     $length = strlen($value);
-    $end    = '';
+    $end = '';
 
     switch ($value[0]) {
         case 's':

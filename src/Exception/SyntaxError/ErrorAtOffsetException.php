@@ -24,14 +24,14 @@ final class ErrorAtOffsetException extends \LogicException implements SyntaxErro
     /** @var mixed */
     private $input;
 
-    /** @var integer Byte offset of error */
+    /** @var int Byte offset of error */
     private $offset;
 
     /**
      * Constructor.
      *
      * @param mixed      $input
-     * @param integer    $offset
+     * @param int        $offset
      * @param string     $message
      * @param \Exception $previous
      */
@@ -52,7 +52,7 @@ final class ErrorAtOffsetException extends \LogicException implements SyntaxErro
     /**
      * Fetch the byte offset the error occurred at.
      *
-     * @return integer
+     * @return int
      */
     public function getOffset()
     {
@@ -74,11 +74,11 @@ final class ErrorAtOffsetException extends \LogicException implements SyntaxErro
         }
 
         if (strlen($snippet) > self::SNIPPET_LENGTH) {
-            $snippet = substr($snippet, 0, self::SNIPPET_LENGTH - 3) . '...';
+            $snippet = substr($snippet, 0, self::SNIPPET_LENGTH - 3).'...';
         }
 
         // Append indicator underneath
-        $snippet .= "\n" . str_repeat(' ', $this->offset - $snippetOffset) . '^';
+        $snippet .= "\n".str_repeat(' ', $this->offset - $snippetOffset).'^';
 
         return $snippet;
     }

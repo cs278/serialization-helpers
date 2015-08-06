@@ -48,7 +48,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(array(), 'unserialize() expects parameter 1 to be string, array given'),
-            array(new \stdClass, 'unserialize() expects parameter 1 to be string, object given'),
+            array(new \stdClass(), 'unserialize() expects parameter 1 to be string, object given'),
         );
     }
 
@@ -95,7 +95,6 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-
     public function dataIsSerialized()
     {
         return array(
@@ -105,7 +104,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
             array(1729, 'i:1729;'),
             array(3.14159, 'd:3.14159;'),
             array('php', 's:3:"php";'),
-            array(array(0 => true, "x" => 32), 'a:2:{i:0;b:1;s:1:"x";i:32;}'),
+            array(array(0 => true, 'x' => 32), 'a:2:{i:0;b:1;s:1:"x";i:32;}'),
             array((object) array(), 'O:8:"stdClass":0:{}'),
             array(new TestStub('ROBOTS'), 'C:41:"Cs278\SerializationHelpers\Tests\TestStub":6:{ROBOTS}'),
         );
@@ -119,7 +118,6 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(serialization\isSerialized($input, $result));
         $this->assertSame(null, $result);
     }
-
 
     public function dataIsSerializedInvalid()
     {
