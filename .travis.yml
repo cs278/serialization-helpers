@@ -16,7 +16,11 @@ matrix:
 
 before_script:
     - composer self-update
+    - wget -q https://scrutinizer-ci.com/ocular.phar
     - composer --prefer-source install
 
 script:
-    - vendor/bin/phpunit
+    - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
+
+after_script:
+    - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
