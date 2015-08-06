@@ -20,6 +20,8 @@ class SyntaxErrorFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateUnexpectedEnd($input)
     {
+        $this->skipOnHhvm();
+
         // Sanity check as the set_error_handler() call breaks PHPUnit's
         // exception catching.
         $this->assertInternalType('string', $input);
@@ -69,6 +71,8 @@ class SyntaxErrorFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateErrorAtOffset($input, $message, $offset)
     {
+        $this->skipOnHhvm();
+
         // Sanity check as the set_error_handler() call breaks PHPUnit's
         // exception catching.
         $this->assertInternalType('string', $input);
@@ -144,5 +148,12 @@ EOT
                 112,
             ),
         );
+    }
+
+    private function skipOnHhvm($message = '')
+    {
+        if (defined('HHVM_VERSION')) {
+            $this->markTestSkipped($message);
+        }
     }
 }
