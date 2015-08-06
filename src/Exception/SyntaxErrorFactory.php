@@ -33,7 +33,7 @@ final class SyntaxErrorFactory
     {
         $frame = $this->findStackFrame($e);
 
-        if (!$frame) {
+        if (null === $frame) {
             throw new \InvalidArgumentException(
                 'ErrorException does not related to an unserialize error'
             );
