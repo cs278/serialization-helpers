@@ -179,17 +179,17 @@ function isSerialized($value, &$result = null)
                 return false;
             }
 
-            switch ($value[2]) {
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                case 6:
-                case 7:
-                case 8:
-                case 9:
+            switch (true) {
+                case '0' === $value[2]:
+                case '1' === $value[2]:
+                case '2' === $value[2]:
+                case '3' === $value[2]:
+                case '4' === $value[2]:
+                case '5' === $value[2]:
+                case '6' === $value[2]:
+                case '7' === $value[2]:
+                case '8' === $value[2]:
+                case '9' === $value[2]:
                 break;
 
                 default:
