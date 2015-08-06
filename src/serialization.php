@@ -57,13 +57,11 @@ function unserialize($input)
             throw new UnknownException($input, 'Unknown error was encountered');
         }
     } catch (\Exception $e) {
-        // Ensure the error handler is restored, even if an exception occurs.
-        restore_error_handler();
-
         throw $e;
+    } finally {
+        // Ensure the error handler is restored.
+        restore_error_handler();
     }
-
-    restore_error_handler();
 
     return $result;
 }
