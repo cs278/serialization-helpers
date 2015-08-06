@@ -26,27 +26,29 @@ use Cs278\SerializationHelpers\Exception\SyntaxErrorFactory;
  */
 function unserialize($input)
 {
-    static $errorHandler;
     static $exceptionFactory;
-
     $currentHandler = null;
 
-    if (!$errorHandler) {
+    if (null === $exceptionFactory) {
         $exceptionFactory = new SyntaxErrorFactory();
+    }
 
-        if (defined('HHVM_VERSION')) {
-            $errorHandler = function ($code, $message, $file, $line) use ($exceptionFactory, &$currentHandler, &$input) {
-                if ($code === E_NOTICE) {
-                    throw $exceptionFactory->create($input, $message);
-                }
+    if (defined('HHVM_VERSION')) {
+        $errorHandler = function ($code, $message, $file, $line) use ($exceptionFactory, &$currentHandler, $input) {
+            if ($code === E_NOTICE) {
+                throw $exceptionFactory->create($input, $message);
+            }
 
-                if ($currentHandler) {
-                    return call_user_func_array($currentHandler, func_get_args());
-                }
+            if ($currentHandler) {
+                return call_user_func_array($currentHandler, func_get_args());
+            }
 
-                return false;
-            };
-        } else {
+            return false;
+        };
+    } else {
+        static $errorHandler;
+
+        if (!$errorHandler) {
             $errorHandler = function ($code, $message, $file, $line) use ($exceptionFactory, &$currentHandler) {
                 if ($code === E_NOTICE) {
                     $e = new \ErrorException($message, $code, 0, $file, $line);
