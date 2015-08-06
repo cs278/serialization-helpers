@@ -167,6 +167,14 @@ function isSerialized($value, &$result = null)
         case 'C':
             $end .= '}';
 
+            if ('a' === $value[0] && $length < 6) {
+                return false;
+            }
+
+            if (('O' === $value[0] || 'C' === $value[0]) && $length < 12) {
+                return false;
+            }
+
             if ($value[1] !== ':') {
                 return false;
             }
