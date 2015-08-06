@@ -34,6 +34,7 @@ function unserialize($input)
     }
 
     if (defined('HHVM_VERSION')) {
+        // @codeCoverageIgnoreStart
         $errorHandler = function ($code, $message, $file, $line) use ($exceptionFactory, &$currentHandler, $input) {
             if ($code === E_NOTICE) {
                 throw $exceptionFactory->create($input, $message);
@@ -46,6 +47,7 @@ function unserialize($input)
             return false;
         };
     } else {
+        // @codeCoverageIgnoreEnd
         static $errorHandler;
 
         if (!$errorHandler) {

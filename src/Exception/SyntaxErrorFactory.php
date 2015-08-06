@@ -79,10 +79,12 @@ final class SyntaxErrorFactory
     public function createFromErrorException(\ErrorException $e)
     {
         if (defined('HHVM_VERSION')) {
+            // @codeCoverageIgnoreStart
             throw new \BadMethodCallException(sprintf(
                 '%s() does not work under HHVM',
                 __METHOD__
             ));
+            // @codeCoverageIgnoreEnd
         }
 
         $frame = $this->findStackFrame($e);
