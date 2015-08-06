@@ -27,16 +27,26 @@ function unserialize($input)
     static $errorHandler;
     static $exceptionFactory;
 
+    $currentHandler = null;
+
     if (!$errorHandler) {
         $exceptionFactory = new SyntaxErrorFactory;
-        $errorHandler = function($code, $message, $file, $line) use ($exceptionFactory) {
-            $e = new \ErrorException($message, $code, 0, $file, $line);
+        $errorHandler = function($code, $message, $file, $line) use ($exceptionFactory, &$currentHandler) {
+            if ($code === E_NOTICE) {
+                $e = new \ErrorException($message, $code, 0, $file, $line);
 
-            throw $exceptionFactory->createFromErrorException($e);
+                throw $exceptionFactory->createFromErrorException($e);
+            }
+
+            if ($currentHandler) {
+                return call_user_func_array($currentHandler, func_get_args());
+            }
+
+            return false;
         };
     }
 
-    set_error_handler($errorHandler, E_NOTICE);
+    $currentHandler = set_error_handler($errorHandler);
 
     try {
         $result = \unserialize($input);
