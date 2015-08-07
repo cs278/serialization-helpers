@@ -85,6 +85,8 @@ class SyntaxErrorFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateFromErrorExceptionThrowsOnBadException()
     {
+        $this->skipOnHhvm();
+
         $factory = new SyntaxErrorFactory;
         $factory->createFromErrorException(new \ErrorException('', 0, 0, '', 0));
     }
