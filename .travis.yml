@@ -10,9 +10,11 @@ php:
     - 7.0
     - hhvm
 
-before_script:
+install:
     - composer self-update
     - wget -q https://scrutinizer-ci.com/ocular.phar
+
+before_script:
     - composer --prefer-source install
 
 script:
