@@ -20,33 +20,23 @@ namespace Cs278\SerializationHelpers\Exception;
 final class SyntaxErrorFactory
 {
     /**
-     * Convert an error exception into SyntaxError exception.
+     * Create a SyntaxError exception.
      *
-     * @param \ErrorException $e ErrorException raised from unserialize() call
+     * @param mixed      $input    Serialized data passed into unserialize()
+     * @param string     $message  Error message from PHP
+     * @param \Exception $previous Previous exception
      *
      * @return SyntaxError
-     *
-     * @throws \InvalidArgumentException Iff ErrorException was not raised by
-     *                                   a call to unserialize()
      */
-    public function createFromErrorException(\ErrorException $e)
+    public function create($input, $message, \Exception $previous = null)
     {
-        $frame = $this->findStackFrame($e);
-
-        if (null === $frame) {
-            throw new \InvalidArgumentException(
-                'ErrorException does not related to an unserialize error'
-            );
-        }
-
-        $message = preg_replace('{^unserialize\(\):\s+}', '', $e->getMessage());
-        $input = isset($frame['args'][0]) ? $frame['args'][0] : null;
+        $message = preg_replace('{^unserialize\(\):\s+}', '', $message);
 
         if ($message === 'Unexpected end of serialized data') {
             return new SyntaxError\UnexpectedEndException(
                 $input,
                 $message,
-                $e
+                $previous
             );
         }
 
@@ -59,15 +49,55 @@ final class SyntaxErrorFactory
                 $input,
                 $offset,
                 $message,
-                $e
+                $previous
             );
         }
 
+        $unexpectedMessage = 'Unknown syntax error occurred';
+        $unexpectedMessage = $message
+            ? sprintf('%s: %s', $unexpectedMessage, $message)
+            : $unexpectedMessage;
+
         return new SyntaxError\UnknownException(
             $input,
-            sprintf('Unknown syntax error occurred: %s', $e->getMessage()),
-            $e
+            $unexpectedMessage,
+            $previous
         );
+    }
+
+    /**
+     * Convert an error exception into SyntaxError exception.
+     *
+     * @param \ErrorException $e ErrorException raised from unserialize() call
+     *
+     * @return SyntaxError
+     *
+     * @throws \InvalidArgumentException Iff ErrorException was not raised by
+     *                                   a call to unserialize()
+     * @throws \BadMethodCallException   Iff interpreter is HHVM
+     */
+    public function createFromErrorException(\ErrorException $e)
+    {
+        if (defined('HHVM_VERSION')) {
+            // @codeCoverageIgnoreStart
+            throw new \BadMethodCallException(sprintf(
+                '%s() does not work under HHVM',
+                __METHOD__
+            ));
+            // @codeCoverageIgnoreEnd
+        }
+
+        $frame = $this->findStackFrame($e);
+
+        if (null === $frame) {
+            throw new \InvalidArgumentException(
+                'ErrorException does not related to an unserialize error'
+            );
+        }
+
+        $input = isset($frame['args'][0]) ? $frame['args'][0] : null;
+
+        return $this->create($input, $e->getMessage(), $e);
     }
 
     /**

@@ -26,18 +26,18 @@ use Cs278\SerializationHelpers\Exception\SyntaxErrorFactory;
  */
 function unserialize($input)
 {
-    static $errorHandler;
     static $exceptionFactory;
-
     $currentHandler = null;
 
-    if (!$errorHandler) {
+    if (null === $exceptionFactory) {
         $exceptionFactory = new SyntaxErrorFactory();
-        $errorHandler = function ($code, $message, $file, $line) use ($exceptionFactory, &$currentHandler) {
-            if ($code === E_NOTICE) {
-                $e = new \ErrorException($message, $code, 0, $file, $line);
+    }
 
-                throw $exceptionFactory->createFromErrorException($e);
+    if (defined('HHVM_VERSION')) {
+        // @codeCoverageIgnoreStart
+        $errorHandler = function ($code, $message, $file, $line) use ($exceptionFactory, &$currentHandler, $input) {
+            if ($code === E_NOTICE) {
+                throw $exceptionFactory->create($input, $message);
             }
 
             if ($currentHandler) {
@@ -46,6 +46,27 @@ function unserialize($input)
 
             return false;
         };
+    } else {
+        // @codeCoverageIgnoreEnd
+        static $errorHandler;
+
+        if (!$errorHandler) {
+            $errorHandler = function ($code, $message, $file, $line) use ($exceptionFactory, &$currentHandler) {
+                if ($code === E_NOTICE) {
+                    $e = new \ErrorException($message, $code, 0, $file, $line);
+
+                    throw $exceptionFactory->createFromErrorException($e);
+                }
+
+                if ($currentHandler) {
+                    return call_user_func_array($currentHandler, func_get_args());
+                }
+
+                // @codeCoverageIgnoreStart
+                return false;
+                // @codeCoverageIgnoreEnd
+            };
+        }
     }
 
     $currentHandler = set_error_handler($errorHandler);
@@ -100,11 +121,35 @@ function isSerialized($value, &$result = null)
         return false;
     }
 
+    if ('' === $value) {
+        return false;
+    }
+
+    /*
+     * Smallest variant of each serialized type.
+     *
+     * string(2) "N;"
+     * string(4) "b:0;"
+     * string(4) "i:0;"
+     * string(4) "d:0;"
+     * string(6) "a:0:{}"
+     * string(7) "s:0:"";"
+     * string(12) "O:1:"a":0:{}"
+     * string(12) "C:1:"b":0:{}"
+     */
     $length = strlen($value);
     $end = '';
 
+    if ($length < 2) {
+        return false;
+    }
+
     switch ($value[0]) {
         case 's':
+            if ($length < 7) {
+                return false;
+            }
+
             if ($value[$length - 2] !== '"') {
                 return false;
             }
@@ -112,6 +157,10 @@ function isSerialized($value, &$result = null)
         case 'b':
         case 'i':
         case 'd':
+            if ($length < 4) {
+                return false;
+            }
+
             // This looks odd but it is quicker than isset()ing
             $end .= ';';
             // Fall through
@@ -120,21 +169,29 @@ function isSerialized($value, &$result = null)
         case 'C':
             $end .= '}';
 
+            if ('a' === $value[0] && $length < 6) {
+                return false;
+            }
+
+            if (('O' === $value[0] || 'C' === $value[0]) && $length < 12) {
+                return false;
+            }
+
             if ($value[1] !== ':') {
                 return false;
             }
 
-            switch ($value[2]) {
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                case 6:
-                case 7:
-                case 8:
-                case 9:
+            switch (true) {
+                case '0' === $value[2]:
+                case '1' === $value[2]:
+                case '2' === $value[2]:
+                case '3' === $value[2]:
+                case '4' === $value[2]:
+                case '5' === $value[2]:
+                case '6' === $value[2]:
+                case '7' === $value[2]:
+                case '8' === $value[2]:
+                case '9' === $value[2]:
                 break;
 
                 default:

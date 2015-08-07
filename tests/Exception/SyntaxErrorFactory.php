@@ -19,11 +19,93 @@ use Cs278\SerializationHelpers\Exception\SyntaxErrorFactory;
 class SyntaxErrorFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @dataProvider dataCreate
+     */
+    public function testCreate($message, $type, $expectedMessage, $expectedOffset = null)
+    {
+        $input = serialize('foobar');
+        $previous = new \Exception;
+        $factory = new SyntaxErrorFactory;
+
+        $exception = $factory->create($input, $message, $previous);
+
+        $this->assertInstanceOf('Exception', $exception);
+        $this->assertInstanceOf('Cs278\SerializationHelpers\Exception\Exception', $exception);
+        $this->assertInstanceOf('Cs278\SerializationHelpers\Exception\SyntaxError', $exception);
+        $this->assertInstanceOf("Cs278\SerializationHelpers\Exception\SyntaxError\\${type}Exception", $exception);
+
+        $this->assertSame($expectedMessage, $exception->getMessage());
+        $this->assertSame($previous, $exception->getPrevious());
+        $this->assertSame($input, $exception->getInput());
+
+        if (null !== $expectedOffset) {
+            $this->assertTrue(method_exists($exception, 'getOffset'));
+            $this->assertSame($expectedOffset, $exception->getOffset());
+        }
+    }
+
+    public function dataCreate()
+    {
+        return array(
+            array(
+                '',
+                'Unknown',
+                'Unknown syntax error occurred',
+            ),
+            array(
+                'Wibble',
+                'Unknown',
+                'Unknown syntax error occurred: Wibble',
+            ),
+            array(
+                'Unexpected end of serialized data',
+                'UnexpectedEnd',
+                'Unexpected end of serialized data',
+            ),
+            array(
+                'unserialize(): Unexpected end of serialized data',
+                'UnexpectedEnd',
+                'Unexpected end of serialized data',
+            ),
+            array(
+                'Error at offset 0 of 4000 bytes',
+                'ErrorAtOffset',
+                'Syntax error at byte 0 of 4000 bytes in serialized input',
+                0,
+            ),
+            array(
+                'unserialize(): Error at offset 2000 of 4000 bytes',
+                'ErrorAtOffset',
+                'Syntax error at byte 2000 of 4000 bytes in serialized input',
+                2000,
+            ),
+        );
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage ErrorException does not related to an unserialize error
+     */
+    public function testCreateFromErrorExceptionThrowsOnBadException()
+    {
+        $this->skipOnHhvm();
+
+        $factory = new SyntaxErrorFactory;
+        $factory->createFromErrorException(new \ErrorException('', 0, 0, '', 0));
+    }
+
+    /**
      * @dataProvider dataCreateUnexpectedEnd
      */
     public function testCreateUnexpectedEnd($input)
     {
-        set_error_handler(function($code, $message, $file, $line) {
+        $this->skipOnHhvm();
+
+        // Sanity check as the set_error_handler() call breaks PHPUnit's
+        // exception catching.
+        $this->assertInternalType('string', $input);
+
+        set_error_handler(function ($code, $message, $file, $line) {
             throw new \ErrorException(
                 $message,
                 E_NOTICE,
@@ -68,7 +150,13 @@ class SyntaxErrorFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateErrorAtOffset($input, $message, $offset)
     {
-        set_error_handler(function($code, $message, $file, $line) {
+        $this->skipOnHhvm();
+
+        // Sanity check as the set_error_handler() call breaks PHPUnit's
+        // exception catching.
+        $this->assertInternalType('string', $input);
+
+        set_error_handler(function ($code, $message, $file, $line) {
             throw new \ErrorException(
                 $message,
                 E_NOTICE,
@@ -139,5 +227,12 @@ EOT
                 112,
             ),
         );
+    }
+
+    private function skipOnHhvm($message = '')
+    {
+        if (defined('HHVM_VERSION')) {
+            $this->markTestSkipped($message);
+        }
     }
 }
