@@ -69,7 +69,13 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
 
     public function dataUnserialize()
     {
-        return array(
+        $isZend = !defined('HHVM_VERSION');
+
+        // HHVM used to be more strict when parsing serialized strings than Zend
+        // see: https://github.com/facebook/hhvm/commit/640e42a9e2d2eebe3638d4db8f27cff84e0649e4
+        $isStrict = !$isZend && HHVM_VERSION_ID < 30600;
+
+        return array_filter(array(
             array(null, 'N;'),
             array(true, 'b:1;'),
             array('foo', 's:3:"foo";'),
@@ -77,9 +83,9 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
             array(array(1, 1, 2, 3), 'a:4:{i:0;i:1;i:1;R:2;i:2;i:2;i:3;i:3;}'),
             array(new TestStub(''), 'C:41:"Cs278\SerializationHelpers\Tests\TestStub":0:{}'),
             array(new TestStub('ROBOTS'), 'C:41:"Cs278\SerializationHelpers\Tests\TestStub":6:{ROBOTS}'),
-            array('f', 's:1:"f"'), // PHP doesn't require the trailing semi colon
-            array('f', 's:1:"f"GARBAG;E'), // PHP will even accept complete garbage
-        );
+            $isStrict ? null : array('f', 's:1:"f"'), // PHP doesn't require the trailing semi colon
+            $isStrict ? null : array('f', 's:1:"f"GARBAG;E'), // PHP will even accept complete garbage
+        ), 'is_array');
     }
 
     /**
